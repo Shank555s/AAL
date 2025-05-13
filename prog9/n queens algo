@@ -1,0 +1,88 @@
+// C# Program to solve the n-queens problem
+using System;
+using System.Collections.Generic;
+
+class GfG {
+
+    // Function to check if it is safe to place
+    // the queen at board[row][col]
+    static bool IsSafe(int[,] mat,
+                             int row, int col) {
+        int n = mat.GetLength(0);
+
+        // Check this col on upper side
+        for (int i = 0; i < row; i++)
+            if (mat[i, col] == 1)
+                return false;
+
+        // Check upper diagonal on left side
+        for (int i = row - 1, j = col - 1; 
+             		i >= 0 && j >= 0; i--, j--)
+            if (mat[i, j] == 1)
+                return false;
+
+        // Check lower diagonal on left side
+        for (int i = row - 1, j = col + 1;
+             		j < n && i >= 0; i--, j++)
+            if (mat[i, j] == 1)
+                return false;
+
+        return true;
+    }
+
+    static bool PlaceQueens(int row, int[,] mat) {
+        int n = mat.GetLength(0);
+
+        // base case: If all queens are placed
+        // then return true
+        if (row == n)
+            return true;
+
+        // Consider the row and try placing
+        // queen in all columns one by one
+        for (int i = 0; i < n; i++) {
+
+            // Check if the queen can be placed
+            if (IsSafe(mat, row, i)) {
+                mat[row, i] = 1;
+                if (PlaceQueens(row + 1, mat))
+                    return true;
+                mat[row, i] = 0;
+            }
+        }
+        return false;
+    }
+
+    // Function to find the solution
+    // to the N-Queens problem
+    public static List<int> NQueen(int n) {
+
+        // Initialize the board
+        int[,] mat = new int[n, n];
+
+        // If the solution exists
+        if (PlaceQueens(0, mat)) {
+
+            // to store the columns of the queens
+            List<int> ans = new List<int>();
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (mat[i, j] == 1) {
+                        ans.Add(j + 1);
+                    }
+                }
+            }
+            return ans;
+        } else
+            return new List<int> { -1 };
+    }
+
+    static void Main(string[] args) {
+        int n = 4;
+        List<int> ans = NQueen(n);
+        Console.WriteLine(string.Join(" ", ans));
+    }
+}
+
+output:
+2 4 1 3
