@@ -1,88 +1,87 @@
-// C# Program to solve the n-queens problem
-using System;
-using System.Collections.Generic;
+#include <stdio.h>
+#include <stdlib.h>
 
-class GfG {
+#define MAX 20
 
-    // Function to check if it is safe to place
-    // the queen at board[row][col]
-    static bool IsSafe(int[,] mat,
-                             int row, int col) {
-        int n = mat.GetLength(0);
+// Function to check if it's safe to place a queen at board[row][col]
+int isSafe(int board[MAX][MAX], int row, int col, int n) {
+    int i, j;
 
-        // Check this col on upper side
-        for (int i = 0; i < row; i++)
-            if (mat[i, col] == 1)
-                return false;
-
-        // Check upper diagonal on left side
-        for (int i = row - 1, j = col - 1; 
-             		i >= 0 && j >= 0; i--, j--)
-            if (mat[i, j] == 1)
-                return false;
-
-        // Check lower diagonal on left side
-        for (int i = row - 1, j = col + 1;
-             		j < n && i >= 0; i--, j++)
-            if (mat[i, j] == 1)
-                return false;
-
-        return true;
+    // Check the same column on the upper side
+    for (i = 0; i < row; i++) {
+        if (board[i][col] == 1)
+            return 0;
     }
 
-    static bool PlaceQueens(int row, int[,] mat) {
-        int n = mat.GetLength(0);
-
-        // base case: If all queens are placed
-        // then return true
-        if (row == n)
-            return true;
-
-        // Consider the row and try placing
-        // queen in all columns one by one
-        for (int i = 0; i < n; i++) {
-
-            // Check if the queen can be placed
-            if (IsSafe(mat, row, i)) {
-                mat[row, i] = 1;
-                if (PlaceQueens(row + 1, mat))
-                    return true;
-                mat[row, i] = 0;
-            }
-        }
-        return false;
+    // Check the upper-left diagonal
+    for (i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+        if (board[i][j] == 1)
+            return 0;
     }
 
-    // Function to find the solution
-    // to the N-Queens problem
-    public static List<int> NQueen(int n) {
-
-        // Initialize the board
-        int[,] mat = new int[n, n];
-
-        // If the solution exists
-        if (PlaceQueens(0, mat)) {
-
-            // to store the columns of the queens
-            List<int> ans = new List<int>();
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (mat[i, j] == 1) {
-                        ans.Add(j + 1);
-                    }
-                }
-            }
-            return ans;
-        } else
-            return new List<int> { -1 };
+    // Check the upper-right diagonal
+    for (i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {
+        if (board[i][j] == 1)
+            return 0;
     }
 
-    static void Main(string[] args) {
-        int n = 4;
-        List<int> ans = NQueen(n);
-        Console.WriteLine(string.Join(" ", ans));
-    }
+    return 1;
 }
 
-output:
-2 4 1 3
+// Function to solve the N-Queens problem using backtracking
+int solveNQueens(int board[MAX][MAX], int row, int n) {
+    // If all queens are placed, return true
+    if (row == n)
+        return 1;
+
+    // Try placing the queen in each column
+    for (int col = 0; col < n; col++) {
+        if (isSafe(board, row, col, n)) {
+            board[row][col] = 1; // Place the queen
+
+            if (solveNQueens(board, row + 1, n))
+                return 1; // If placing the queen leads to a solution, return true
+
+            board[row][col] = 0; // Backtrack and remove the queen
+        }
+    }
+
+    return 0; // If no column is valid, return false
+}
+
+// Function to print the solution
+void printSolution(int board[MAX][MAX], int n) {
+    printf("Solution:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (board[i][j] == 1)
+                printf("Q ");
+            else
+                printf(". ");
+        }
+        printf("\n");
+    }
+
+    printf("Queen positions (1-based column indices): ");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (board[i][j] == 1)
+                printf("%d ", j + 1);
+        }
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    int n = 4; // Number of queens (can be adjusted)
+    int board[MAX][MAX] = {0}; // Initialize the board with zeros
+
+    if (solveNQueens(board, 0, n)) {
+        printSolution(board, n);
+    } else {
+        printf("No solution exists.\n");
+    }
+
+    return 0;
+}
