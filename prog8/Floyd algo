@@ -1,7 +1,6 @@
 #include <stdio.h>
-#define INF 100000000 // Define a large number as "infinity"
+#define INF 100000000
 
-// Function to implement the Floyd-Warshall algorithm
 void floydWarshall(int dist[][5], int V) {
     for (int k = 0; k < V; k++) {
         for (int i = 0; i < V; i++) {
@@ -17,7 +16,6 @@ void floydWarshall(int dist[][5], int V) {
     }
 }
 
-// Main function
 int main() {
     int V = 5; // Number of vertices
 
@@ -30,10 +28,8 @@ int main() {
         {1, INF, INF, 4, 0}
     };
 
-    // Run the Floyd-Warshall algorithm
     floydWarshall(dist, V);
 
-    // Print the resulting shortest path matrix
     printf("The shortest distances between every pair of vertices:\n");
     for (int i = 0; i < V; i++) {
         for (int j = 0; j < V; j++) {
