@@ -1,39 +1,29 @@
 #include <stdio.h>
 #include <limits.h>
 
-#define MAX 20 
+#define MAX 20 // Maximum number of cities
 
-int dp[1 << MAX][MAX]; 
-
-int totalCost(int mask, int pos, int n, int cost[MAX][MAX]) {
-    if (mask == (1 << n) - 1) {
-        return cost[pos][0];
+int tsp(int cost[MAX][MAX], int visited[MAX], int currPos, int n, int count, int currCost, int start) {
+    // Base case: if all cities are visited, return the cost to return to the starting city
+    if (count == n && cost[currPos][start] > 0) {
+        return currCost + cost[currPos][start];
     }
 
-    if (dp[mask][pos] != -1) {
-        return dp[mask][pos];
-    }
+    int minCost = INT_MAX;
 
-    int ans = INT_MAX;
-
-    for (int city = 0; city < n; city++) {
-        if ((mask & (1 << city)) == 0) { 
-            int newAns = cost[pos][city] + totalCost(mask | (1 << city), city, n, cost);
-            ans = (newAns < ans) ? newAns : ans;
+    // Try visiting every city
+    for (int i = 0; i < n; i++) {
+        // If the city is not visited and there's a path from currPos to i
+        if (!visited[i] && cost[currPos][i] > 0) {
+            visited[i] = 1;
+            // Recur for the next city
+            int tempCost = tsp(cost, visited, i, n, count + 1, currCost + cost[currPos][i], start);
+            minCost = (tempCost < minCost) ? tempCost : minCost;
+            visited[i] = 0; // Backtrack
         }
     }
 
-    return dp[mask][pos] = ans;
-}
-
-int tsp(int cost[MAX][MAX], int n) {
-    for (int i = 0; i < (1 << n); i++) {
-        for (int j = 0; j < n; j++) {
-            dp[i][j] = -1;
-        }
-    }
-
-    return totalCost(1, 0, n, cost);
+    return minCost;
 }
 
 int main() {
@@ -44,11 +34,13 @@ int main() {
         {20, 25, 30, 0}
     };
 
-    int n = 4;
+    int n = 4; // Number of cities
+    int visited[MAX] = {0}; // To track visited cities
 
-    int result = tsp(cost, n);
+    visited[0] = 1; // Start from city 0
+    int minCost = tsp(cost, visited, 0, n, 1, 0, 0);
 
-    printf("The minimum cost to visit all cities is: %d\n", result);
+    printf("The minimum cost to visit all cities is: %d\n", minCost);
 
     return 0;
 }
