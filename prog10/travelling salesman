@@ -1,19 +1,16 @@
 #include <stdio.h>
 #include <limits.h>
 
-#define MAX 20 // Maximum number of cities
+#define MAX 20 
 
 int tsp(int cost[MAX][MAX], int visited[MAX], int currPos, int n, int count, int currCost, int start) {
-    // Base case: if all cities are visited, return the cost to return to the starting city
     if (count == n && cost[currPos][start] > 0) {
         return currCost + cost[currPos][start];
     }
 
     int minCost = INT_MAX;
 
-    // Try visiting every city
     for (int i = 0; i < n; i++) {
-        // If the city is not visited and there's a path from currPos to i
         if (!visited[i] && cost[currPos][i] > 0) {
             visited[i] = 1;
             // Recur for the next city
@@ -34,10 +31,10 @@ int main() {
         {20, 25, 30, 0}
     };
 
-    int n = 4; // Number of cities
-    int visited[MAX] = {0}; // To track visited cities
+    int n = 4; 
+    int visited[MAX] = {0}; 
 
-    visited[0] = 1; // Start from city 0
+    visited[0] = 1;
     int minCost = tsp(cost, visited, 0, n, 1, 0, 0);
 
     printf("The minimum cost to visit all cities is: %d\n", minCost);
