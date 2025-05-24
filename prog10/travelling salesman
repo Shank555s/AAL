@@ -1,50 +1,41 @@
 #include <stdio.h>
 #include <limits.h>
 
-#define MAX 20 // Maximum number of cities
+#define MAX 20 
 
-int dp[1 << MAX][MAX]; // Memoization table
+int dp[1 << MAX][MAX]; 
 
-// Function to calculate the minimum cost
 int totalCost(int mask, int pos, int n, int cost[MAX][MAX]) {
-    // Base case: If all cities are visited, return the cost to return to the starting city
     if (mask == (1 << n) - 1) {
         return cost[pos][0];
     }
 
-    // If the subproblem is already solved, return the result
     if (dp[mask][pos] != -1) {
         return dp[mask][pos];
     }
 
     int ans = INT_MAX;
 
-    // Try visiting every city that hasn't been visited yet
     for (int city = 0; city < n; city++) {
-        if ((mask & (1 << city)) == 0) { // Check if the city is not visited
+        if ((mask & (1 << city)) == 0) { 
             int newAns = cost[pos][city] + totalCost(mask | (1 << city), city, n, cost);
             ans = (newAns < ans) ? newAns : ans;
         }
     }
 
-    // Store the result in the memoization table
     return dp[mask][pos] = ans;
 }
 
-// Wrapper function for TSP
 int tsp(int cost[MAX][MAX], int n) {
-    // Initialize memoization table with -1
     for (int i = 0; i < (1 << n); i++) {
         for (int j = 0; j < n; j++) {
             dp[i][j] = -1;
         }
     }
 
-    // Start the tour from city 0 with only city 0 visited
     return totalCost(1, 0, n, cost);
 }
 
-// Main function
 int main() {
     int cost[MAX][MAX] = {
         {0, 10, 15, 20},
@@ -53,7 +44,7 @@ int main() {
         {20, 25, 30, 0}
     };
 
-    int n = 4; // Number of cities
+    int n = 4;
 
     int result = tsp(cost, n);
 
